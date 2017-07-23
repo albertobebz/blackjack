@@ -33,7 +33,6 @@ Card.prototype = {
 }
 
 // Hand constructor
-// Hand of cards
 function Hand(){
     this.card1 = dealingCard();
     this.card2 = dealingCard();
@@ -109,3 +108,36 @@ function userPlayer() {
   }
   return userHand;
 }
+
+function declareWinner(user, dealer){
+  var userScore = user.score();
+  var dealerScore = dealer.score();
+
+  if(userScore > 21){
+    if(dealerScore > 21){ return "TIE"; }
+    else { return "DEALER WIN"; }
+  }
+  else if(dealerScore > 21){ return "YOU WIN"; }
+  else if(userScore > dealerScore){ return "YOU WIN"; }
+  else if(dealerScore > userScore){ return "DEALER WIN"; }
+  else { return "TIE GAME"; }
+}
+
+function blackJackGame() {
+  var player = userPlayer();
+  var dealer = computerPlayer();
+
+  var winner = "";
+  var playerPrompt = (player.busted()) ? "You're out! Score" : "Your score";
+  var dealerPrompt = (dealer.busted()) ? "Dealer's out! Score" : "Dealer's score";
+
+  winner += declareWinner(player, dealer) + "\n";
+  winner += playerPrompt + ": " + player.score();
+  winner += " (" + player.printHand() + ")\n";
+  winner += dealerPrompt + ": " + dealer.score();
+  winner += " (" + dealer.printHand() + ")\n";
+
+  console.log(winner);
+}
+
+blackJackGame();
