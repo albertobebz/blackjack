@@ -33,48 +33,79 @@ Card.prototype = {
 }
 
 // Hand constructor
+// Hand of cards
 function Hand(){
-  var card1 = dealingCard();
-  var card2 = dealingCard();
-  var cardsHand = [card1, card2];
+    this.card1 = dealingCard();
+    this.card2 = dealingCard();
+    this.cardsHand = [this.card1, this.card2];
+}
 
-  this.score = function () {
+Hand.prototype = {
+
+  score: function () {
     var i,x;
     var sum = 0;
     var aces = 0;
-    for (i = 0; i < cardsHand.length; i++) {
-      x = cardsHand[i].getValue();
+    for (i = 0; i < this.cardsHand.length; i++) {
+      x = this.cardsHand[i].getValue();
       if (x === 11) {
         aces++;
         sum++;
-      } else { sum += x; }
+      }
+      else { sum += x; }
     }
     while (sum < 21 && aces > 0) {
       if (sum + 10 <= 21) {
-        sum += 10;
-        aces--;
-      } else {
-        break;
-      }
+          sum += 10;
+          aces--;
+      } else { break; }
     }
     return sum;
-  };
+  },
 
-  this.printHand = function(){
+  printHand: function(){
     var printStringHand = [];
 
-    for(var i = 0; i < cardsHand.length; i++){
-      printStringHand.push(cardsHand[i].cardValue() + " of " + cardsHand[i].suitSymbol());
+    for(var i = 0; i < this.cardsHand.length; i++){
+      printStringHand.push(this.cardsHand[i].cardValue() + " of " + this.cardsHand[i].suitSymbol());
     }
 
     return printStringHand.join(", ");
-  }
+  },
 
-  this.newHit = function(){
-    return cardsHand.push(dealingCard());
-  }
+  newHit: function(){
+    return this.cardsHand.push(dealingCard());
+  },
 
-  this.busted = function(){
+  busted: function(){
     return (this.score() > 21);
   }
+
+}
+
+// Return a new Card, and assign Suit/Number
+function dealingCard(){
+  var cardSuit = Math.floor(Math.random() * 4) + 1;
+  var cardNumber = Math.floor(Math.random() * 13) +1;
+  return new Card(cardSuit, cardNumber);
+}
+
+function computerPlayer(){
+  var dealerHand = new Hand();
+
+  while(dealerHand.score() < 17){
+    dealerHand.newHit();
+  }
+
+  return dealerHand;
+}
+
+function userPlayer() {
+  var userHand = new Hand();
+  var confirm_loop = true;
+  while ( confirm_loop && !userHand.busted() ){
+    confirm_loop = confirm("Cards: " + userHand.printHand() + "\n" + "Score: " + userHand.score() + "\n" + "Do you want another card?");
+    if (confirm_loop) { userHand.newHit(); }
+  }
+  return userHand;
 }
